@@ -1,6 +1,6 @@
 /**
  *  D-Link Smart Security Camera
- *  Version 0.0.1
+ *  Version 1.0.0
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -39,8 +39,7 @@ preferences {
 		input "departurePresence", "capability.presenceSensor", title: "Departure Of", required: false, multiple: true
 	}
 	section("Choose camera to use") {
-		input "camera", "capability.imageCapture", description: "NOTE: Currently only compatable with DCS-5020L Device made by BLebson"
-		input "burstCount", "number", title: "How many? (default 5)", defaultValue:5
+		input "camera", "capability.imageCapture", description: "NOTE: Currently only compatable with DCS-5020L Device made by BLebson"		
 	}
 	section("Choose which preset camera position to move to"){
 	  input "position", "string", defaultValue: 1 , required: true
@@ -78,11 +77,12 @@ def subscribeToEvents() {
 
 def sendMessage(evt) {
 	log.debug "$evt.name: $evt.value, $messageText"
-camera.presetCmd(position)
-  runIn(5, camera.take())
-	(1..((burstCount ?: 5) - 1)).each {
-		camera.take(delay: (500 * it))
-	}
+    camera.deviceNotification(position)
+  	takePicture()
+    pause(5000)
+  	takePicture()
+	pause(5000)
+    takePicture()
 
     if (location.contactBookEnabled) {
         sendNotificationToContacts(messageText, recipients)
@@ -95,3 +95,6 @@ camera.presetCmd(position)
     }
 }
 
+def takePicture(){
+	camera.take()
+}
