@@ -1,6 +1,6 @@
 /**
  *  D-Link Smart Security Camera
- *  Version 1.0.0
+ *  Version 1.2.0
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -24,7 +24,7 @@ definition(
     name: "D-Link Smart Security Camera",
     namespace: "blebson",
     author: "Ben Lebson",
-    description: "Move to preset position and take a burst of photos and send a push notification when...",
+    description: "Move to preset position and take a burst of photos and/or video clip and send a push notification",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Partner/photo-burst-when.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Partner/photo-burst-when@2x.png"
 )
@@ -39,11 +39,16 @@ preferences {
 		input "departurePresence", "capability.presenceSensor", title: "Departure Of", required: false, multiple: true
 	}
 	section("Choose camera to use") {
-		input "camera", "capability.imageCapture", description: "NOTE: Currently only compatable with DCS-5020L Device made by BLebson"		
+		input "camera", "capability.imageCapture", description: "NOTE: Currently only compatable with DCS-5020L or DCS-942L Device made by BLebson"		
+         input(name: "video", title: "Record Video", type: "bool", required: false, defaultValue: "false")
+         input name: "duration", title: "Duration of Video Clip:", type: "string", defaultValue: 30 , required: true
+         input(name: "picture", title: "Take Still Picture", type: "bool", required: false, defaultValue: "false")
 	}
 	section("Choose which preset camera position to move to"){
-	  input "position", "string", defaultValue: 1 , required: true
-	}
+    input(name: "moveEnabled", title: "Can your camera pan/tilt?", type: "bool", required: false, defaultValue: "false")
+    input name: "position", title: "Preset Position Number:", type: "string", defaultValue: 1 , required: true
+	
+    }
 	section("Then send this message in a push notification"){
 		input "messageText", "text", title: "Message Text"
 	}
@@ -77,12 +82,20 @@ def subscribeToEvents() {
 
 def sendMessage(evt) {
 	log.debug "$evt.name: $evt.value, $messageText"
-    camera.deviceNotification(position)
+    if(moveEnabled == true){
+    	camera.deviceNotification(position)
+    }
+    if(picture == true) {
   	takePicture()
     pause(5000)
   	takePicture()
 	pause(5000)
     takePicture()
+    }
+    if(video == true) {
+    camera.vrOn()
+    runin(duration, camera.vrOff())
+    }
 
     if (location.contactBookEnabled) {
         sendNotificationToContacts(messageText, recipients)
