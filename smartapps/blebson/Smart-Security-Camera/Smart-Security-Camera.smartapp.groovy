@@ -1,6 +1,6 @@
 /**
  *  D-Link Smart Security Camera
- *  Version 1.2.0
+ *  Version 1.2.1
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -86,15 +86,15 @@ def sendMessage(evt) {
     	camera.deviceNotification(position)
     }
     if(picture == true) {
-  	takePicture()
-    pause(5000)
-  	takePicture()
-	pause(5000)
-    takePicture()
+  		takePicture()
+    	pause(5000)
+  		takePicture()
+		pause(5000)
+    	takePicture()
     }
     if(video == true) {
-    camera.vrOn()
-    runin(duration, camera.vrOff())
+    	camera.vrOn()
+    	runIn(duration.toInteger(), videoOff)
     }
 
     if (location.contactBookEnabled) {
@@ -110,4 +110,9 @@ def sendMessage(evt) {
 
 def takePicture(){
 	camera.take()
+}
+
+def videoOff(){
+	log.debug "Turning Camera Video Off after ${duration} seconds."
+	camera.vrOff()
 }
