@@ -1,5 +1,5 @@
 /**
- *  D-Link Smart Security Camera
+ *  Smart Security Camera
  *  Version 1.2.1
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
