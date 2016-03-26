@@ -21,7 +21,7 @@
  */
 
 definition(
-    name: "D-Link Smart Security Camera",
+    name: "Smart Security Camera",
     namespace: "blebson",
     author: "Ben Lebson",
     description: "Move to preset position and take a burst of photos and/or video clip and send a push notification",
