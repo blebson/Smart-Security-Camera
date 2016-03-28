@@ -87,10 +87,8 @@ def sendMessage(evt) {
     }
     if(picture == true) {
   		takePicture()
-    	pause(5000)
-  		takePicture()
-		pause(5000)
-    	takePicture()
+  		takePicture([delay: 5])
+    		takePicture([delay: 10])
     }
     if(video == true) {
     	camera.vrOn()
