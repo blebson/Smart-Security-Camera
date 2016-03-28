@@ -1,6 +1,6 @@
 /**
  *  Smart Security Camera
- *  Version 1.2.1
+ *  Version 1.2.2
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -82,14 +82,18 @@ def subscribeToEvents() {
 
 def sendMessage(evt) {
 	log.debug "$evt.name: $evt.value, $messageText"
+    //log.debug "Move Enabled: ${moveEnabled}"
     if(moveEnabled == true){
     	camera.deviceNotification(position)
     }
+    //log.debug "Take Picture: ${picture}"
     if(picture == true) {
-  		takePicture()
-  		takePicture([delay: 5])
-    		takePicture([delay: 10])
+		(1..3).each {
+			camera.take(delay: (7 * it))
+		}
+
     }
+    //log.debug "Take Video: ${video}"
     if(video == true) {
     	camera.vrOn()
     	runIn(duration.toInteger(), videoOff)
@@ -104,10 +108,6 @@ def sendMessage(evt) {
             sendSms(phone, messageText)
         }
     }
-}
-
-def takePicture(){
-	camera.take()
 }
 
 def videoOff(){
