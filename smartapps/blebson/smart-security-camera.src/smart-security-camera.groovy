@@ -1,6 +1,6 @@
 /**
  *  Smart Security Camera
- *  Version 1.2.2
+ *  Version 1.2.3
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -41,7 +41,8 @@ preferences {
 	section("Choose camera to use") {
 		input "camera", "capability.imageCapture", description: "NOTE: Currently only compatable with DCS-5020L or DCS-942L Device made by BLebson"		
          input(name: "video", title: "Record Video", type: "bool", required: false, defaultValue: "false")
-         input name: "duration", title: "Duration of Video Clip:", type: "string", defaultValue: 30 , required: true
+         input name: "duration", title: "Duration of Video Clip (for everything other than a motion event):", type: "string", defaultValue: 30 , required: true
+         input name: "length", title: "Length of Video Clip after motion stops:", type: "string", defaultValue: 15 , required: true
          input(name: "picture", title: "Take Still Picture", type: "bool", required: false, defaultValue: "false")
 	}
 	section("Choose which preset camera position to move to"){
@@ -75,6 +76,7 @@ def subscribeToEvents() {
 	subscribe(contact, "contact.open", sendMessage)
 	subscribe(acceleration, "acceleration.active", sendMessage)
 	subscribe(motion, "motion.active", sendMessage)
+    subscribe(motion, "motion.inactive", sendMessage)
 	subscribe(mySwitch, "switch.on", sendMessage)
 	subscribe(arrivalPresence, "presence.present", sendMessage)
 	subscribe(departurePresence, "presence.not present", sendMessage)
@@ -95,8 +97,18 @@ def sendMessage(evt) {
     }
     //log.debug "Take Video: ${video}"
     if(video == true) {
-    	camera.vrOn()
-    	runIn(duration.toInteger(), videoOff)
+    	if((evt.name == "motion")&&(evt.value == "active")) {
+        	log.debug "Turning Video Recording On."
+    		camera.vrOn()
+        }
+        else if((evt.name == "motion")&&(evt.value == "inactive")) {
+        	log.debug "Turning Video Recording Off in ${length} seconds."
+    		runIn(length.toInteger(), videoOff)
+        }
+        else if(evt.name != "motion") {
+        	camera.vrOn()
+            runIn(duration.toInteger(), videoOff)
+        }
     }
 
     if (location.contactBookEnabled) {
@@ -111,6 +123,6 @@ def sendMessage(evt) {
 }
 
 def videoOff(){
-	log.debug "Turning Camera Video Off after ${duration} seconds."
+	//log.debug "Turning Video Recording Off in ${duration} seconds."
 	camera.vrOff()
 }
