@@ -1,6 +1,6 @@
 /**
  *  Smart Security Camera
- *  Version 1.2.3
+ *  Version 1.2.4
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -86,7 +86,7 @@ def sendMessage(evt) {
 	log.debug "$evt.name: $evt.value, $messageText"
     //log.debug "Move Enabled: ${moveEnabled}"
     if(moveEnabled == true){
-    	camera.deviceNotification(position)
+    	camera.presetCommand(position)
     }
     //log.debug "Take Picture: ${picture}"
     if(picture == true) {
@@ -110,8 +110,19 @@ def sendMessage(evt) {
             runIn(duration.toInteger(), videoOff)
         }
     }
+    
+    if(!((evt.name == "motion")&&(evt.value == "inactive"))) {
+    
+    	sendNotification()
+    
+    }
 
-    if (location.contactBookEnabled) {
+  
+}
+
+def sendNotification(){
+
+	if (location.contactBookEnabled) {
         sendNotificationToContacts(messageText, recipients)
     }
     else {
