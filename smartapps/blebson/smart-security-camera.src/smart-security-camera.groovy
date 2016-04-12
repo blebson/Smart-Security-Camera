@@ -47,7 +47,7 @@ preferences {
 	}
 	section("Choose which preset camera position to move to"){
     input(name: "moveEnabled", title: "Can your camera pan/tilt?", type: "bool", required: false, defaultValue: "false")
-    input name: "position", title: "Preset Position Number:", type: "string", defaultValue: 1 , required: true
+    input name: "position", title: "Preset Position Number/Name:", type: "string", defaultValue: 1 , required: true
 	
     }
 	section("Then send this message in a push notification"){
