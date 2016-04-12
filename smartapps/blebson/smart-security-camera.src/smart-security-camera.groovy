@@ -108,16 +108,6 @@ def sendMessage(evt) {
         	log.debug "Turning Video Recording Off in ${length} seconds."
     		runIn(length.toInteger(), videoOff)
         }
-        
-        if(moveEnabled == true){
-    		camera.presetCommand(position)
-    	}
-    
-    	if(picture == true) {
-			(1..3).each {
-				camera.take(delay: (7 * it))
-			}
-    	}
     }
     else if(evt.name != "motion") {
         camera.vrOn()
