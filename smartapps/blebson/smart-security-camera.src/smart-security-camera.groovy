@@ -1,6 +1,6 @@
 /**
  *  Smart Security Camera
- *  Version 1.2.4
+ *  Version 1.2.5
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -39,7 +39,7 @@ preferences {
 		input "departurePresence", "capability.presenceSensor", title: "Departure Of", required: false, multiple: true
 	}
 	section("Choose camera to use") {
-		input "camera", "capability.imageCapture", description: "NOTE: Currently only compatable with DCS-5020L or DCS-942L Device made by BLebson"		
+		input "camera", "capability.imageCapture", description: "NOTE: Currently only compatable with DCS-5222L, DCS-5020L or DCS-942L Devices made by BLebson"		
          input(name: "video", title: "Record Video", type: "bool", required: false, defaultValue: "false")
          input name: "duration", title: "Duration of Video Clip (for everything other than a motion event):", type: "string", defaultValue: 30 , required: true
          input name: "length", title: "Length of Video Clip after motion stops:", type: "string", defaultValue: 15 , required: true
@@ -47,14 +47,14 @@ preferences {
 	}
 	section("Choose which preset camera position to move to"){
     input(name: "moveEnabled", title: "Can your camera pan/tilt?", type: "bool", required: false, defaultValue: "false")
-    input name: "position", title: "Preset Position Number/Name:", type: "string", defaultValue: 1 , required: true
+    input name: "position", title: "Preset Position Number:", type: "string", defaultValue: 1 , required: true
 	
     }
 	section("Then send this message in a push notification"){
 		input "messageText", "text", title: "Message Text"
 	}
 	section("And as text message to this number (optional)"){
-        input("recipients", "contact", title: "Send notifications to") {
+        input("recipients", "contact", title: "Send notifications to", required: false) {
             input "phone", "phone", title: "Phone Number", required: false
         }
 	}
@@ -83,33 +83,58 @@ def subscribeToEvents() {
 }
 
 def sendMessage(evt) {
-	log.debug "$evt.name: $evt.value, $messageText"
-    //log.debug "Move Enabled: ${moveEnabled}"
-    if(moveEnabled == true){
-    	camera.presetCommand(position)
-    }
-    //log.debug "Take Picture: ${picture}"
-    if(picture == true) {
-		(1..3).each {
-			camera.take(delay: (7 * it))
-		}
-
-    }
-    //log.debug "Take Video: ${video}"
-    if(video == true) {
-    	if((evt.name == "motion")&&(evt.value == "active")) {
+	unschedule(videoOff)
+	log.debug "$evt.name: $evt.value, $messageText" 
+    
+    if((evt.name == "motion")&&(evt.value == "active")) {
+        if(video == true) {
         	log.debug "Turning Video Recording On."
     		camera.vrOn()
-        }
-        else if((evt.name == "motion")&&(evt.value == "inactive")) {
+           }
+            
+        if(moveEnabled == true){
+    		camera.presetCommand(position)
+   		}
+   		 
+    	if(picture == true) {
+			(1..3).each {
+				camera.take(delay: (7 * it))
+			}
+
+    	}
+    }
+    else if((evt.name == "motion")&&(evt.value == "inactive")) {
+        if(video == true) {
         	log.debug "Turning Video Recording Off in ${length} seconds."
     		runIn(length.toInteger(), videoOff)
         }
-        else if(evt.name != "motion") {
-        	camera.vrOn()
-            runIn(duration.toInteger(), videoOff)
-        }
+        
+        if(moveEnabled == true){
+    		camera.presetCommand(position)
+    	}
+    
+    	if(picture == true) {
+			(1..3).each {
+				camera.take(delay: (7 * it))
+			}
+    	}
     }
+    else if(evt.name != "motion") {
+        camera.vrOn()
+        runIn(duration.toInteger(), videoOff)
+        
+        if(moveEnabled == true){
+    		camera.presetCommand(position)
+    	}
+   
+    	if(picture == true) {
+			(1..3).each {
+				camera.take(delay: (7 * it))
+			}
+
+    	}
+    }
+
     
     if(!((evt.name == "motion")&&(evt.value == "inactive"))) {
     
@@ -121,15 +146,16 @@ def sendMessage(evt) {
 }
 
 def sendNotification(){
-
-	if (location.contactBookEnabled) {
-        sendNotificationToContacts(messageText, recipients)
-    }
-    else {
-        sendPush(messageText)
-        if (phone) {
-            sendSms(phone, messageText)
-        }
+	if((recipients != null) && (phone != null)){
+		if (location.contactBookEnabled) {
+        	sendNotificationToContacts(messageText, recipients)
+    	}
+    	else {
+        	sendPush(messageText)
+        	if (phone) {
+            	sendSms(phone, messageText)
+        	}
+    	}
     }
 }
 
