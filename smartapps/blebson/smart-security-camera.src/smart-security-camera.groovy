@@ -1,6 +1,6 @@
 /**
  *  Smart Security Camera
- *  Version 1.2.5
+ *  Version 1.2.6
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -136,17 +136,16 @@ def sendMessage(evt) {
 }
 
 def sendNotification(){
-	if((recipients != null) && (phone != null)){
-		if (location.contactBookEnabled) {
-        	sendNotificationToContacts(messageText, recipients)
-    	}
-    	else {
-        	sendPush(messageText)
-        	if (phone) {
-            	sendSms(phone, messageText)
-        	}
-    	}
+	
+	if (location.contactBookEnabled) {
+        sendNotificationToContacts(messageText, recipients)
     }
+    else {
+        sendPush(messageText)
+        if (phone) {
+            sendSms(phone, messageText)
+        }
+    }    
 }
 
 def videoOff(){
