@@ -1,6 +1,6 @@
 /**
  *  Smart Security Camera
- *  Version 1.2.6
+ *  Version 1.2.7
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -110,8 +110,10 @@ def sendMessage(evt) {
         }
     }
     else if(evt.name != "motion") {
-        camera.vrOn()
-        runIn(duration.toInteger(), videoOff)
+        if(video == true) {
+        	camera.vrOn()
+        	runIn(duration.toInteger(), videoOff)
+        }
         
         if(moveEnabled == true){
     		camera.presetCommand(position)
