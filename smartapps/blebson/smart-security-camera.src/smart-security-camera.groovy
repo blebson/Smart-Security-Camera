@@ -98,7 +98,7 @@ def sendMessage(evt) {
    		 
     	if(picture == true) {
 			(1..3).each {
-				camera.take(delay: (7 * it))
+				camera.take(delay: (7000 * it))
 			}
 
     	}
@@ -121,7 +121,7 @@ def sendMessage(evt) {
    
     	if(picture == true) {
 			(1..3).each {
-				camera.take(delay: (7 * it))
+				camera.take(delay: (7000 * it))
 			}
 
     	}
