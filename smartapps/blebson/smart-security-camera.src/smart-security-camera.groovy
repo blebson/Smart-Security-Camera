@@ -1,6 +1,6 @@
 /**
  *  Smart Security Camera
- *  Version 1.2.7
+ *  Version 1.2.8
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -39,7 +39,7 @@ preferences {
 		input "departurePresence", "capability.presenceSensor", title: "Departure Of", required: false, multiple: true
 	}
 	section("Choose camera to use") {
-		input "camera", "capability.imageCapture", description: "NOTE: Currently only compatable with DCS-5222L, DCS-5020L or DCS-942L Devices made by BLebson"		
+		input "camera", "capability.imageCapture", description: "NOTE: Currently only compatable with D-Link Devices made by BLebson"		
          input(name: "video", title: "Record Video", type: "bool", required: false, defaultValue: "false")
          input name: "duration", title: "Duration of Video Clip (for everything other than a motion event):", type: "string", defaultValue: 30 , required: true
          input name: "length", title: "Length of Video Clip after motion stops:", type: "string", defaultValue: 15 , required: true
