@@ -1,6 +1,6 @@
 /**
  *  Smart Security Camera
- *  Version 1.2.8
+ *  Version 1.2.9
  *  Copyright 2016 BLebson
  *  Based on Photo Burst When... Copyright 2015 SmartThings
  *
@@ -43,7 +43,7 @@ preferences {
          input(name: "video", title: "Record Video", type: "bool", required: false, defaultValue: "false")
          input name: "duration", title: "Duration of Video Clip (for everything other than a motion event):", type: "string", defaultValue: 30 , required: true
          input name: "length", title: "Length of Video Clip after motion stops:", type: "string", defaultValue: 15 , required: true
-         input(name: "picture", title: "Take Still Picture", type: "bool", required: false, defaultValue: "false")
+         input(name: "picture", title: "Take Still Picture", type: "bool", required: false, defaultValue: "true")
 	}
 	section("Choose which preset camera position to move to"){
     input(name: "moveEnabled", title: "Can your camera pan/tilt?", type: "bool", required: false, defaultValue: "false")
